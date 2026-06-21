@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSC 121: Web Programming Portfolio</title>
+    <style>
+        /* 1. Updated Background Image Variables */
+        :root {
+            --bg-gradient: linear-gradient(rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.88)), url('https://images.unsplash.com/photo-1618401471353-b98aedd07871?w=600&auto=format&fit=crop&q=60'); 
+            --accent-purple: #c084fc; 
+            --dark-purple: #f3eafd; 
+            --text-muted: #bcacc8; 
+            --card-bg: #121212; 
+            --border-color: #2e1f38; 
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* 2. Body Settings to make the image stretch and stay put on your phone */
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: var(--dark-purple);
+            line-height: 1.6;
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Fixed Navigation Header */
+        header {
+            background: rgba(0, 0, 0, 0.75); 
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(192, 132, 252, 0.06);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--dark-purple);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-left: 18px;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            color: var(--accent-purple);
+        }
+
+        /* Hero Landing Section */
+        .hero {
+            background: transparent; 
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 2px dashed var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .hero h1 {
+            font-size: 1.9rem;
+            color: var(--dark-purple);
+            margin-bottom: 12px;
+            line-height: 1.3;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+            max-width: 500px;
+            margin: 0 auto;
+            color: var(--text-muted);
+        }
+
+        /* Section Header Layout */
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--dark-purple);
+            margin: 20px 0 30px 0;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '🌸';
+            display: block;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        /* Dynamic Grid Layout for Cards */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .module-preview-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(192, 132, 252, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .module-preview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 22px rgba(192, 132, 252, 0.1);
+        }
+
+        /* Aesthetic Image & Icon Placeholders */
+        .card-image-slot {
+            width: 100%;
+            height: 140px;
+            background-color: #1a1520;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            border: 1px dashed #4e355e;
+            overflow: hidden; 
+        }
+
+        .card-image-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .module-preview-card h3 {
+            color: var(--dark-purple);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .module-preview-card p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            min-height: 40px;
+        }
+
+        /* Elegant Pill Buttons */
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-purple);
+            color: #000000;
+            padding: 10px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(192, 132, 252, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #a855f7;
+            box-shadow: 0 6px 14px rgba(168, 85, 247, 0.25);
+        }
+
+        /* Separate Inner Page Visibility System */
+        .app-page {
+            display: none !important;
+        }
+        .app-page.active-view {
+            display: block !important;
+        }
+        
+        /* Forces landing view to safely layout via flex only when active */
+        #landing-view.active-view {
+            display: flex !important;
+        }
+
+        /* Detailed Module View Panels */
+        .module-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 35px 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .module-card h2 {
+            font-size: 1.6rem;
+            color: var(--dark-purple);
+            margin: 15px 0 5px 0;
+            text-align: center;
+        }
+        
+        .module-card .subtitle {
+            text-align: center;
+            color: var(--accent-purple);
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+        }
+
+        .module-card h4 {
+            color: var(--dark-purple);
+            margin: 25px 0 10px 0;
+            font-size: 1.15rem;
+            border-left: 4px solid var(--accent-purple);
+            padding-left: 10px;
+        }
+        
+        .module-card h5 {
+            color: var(--accent-purple);
+            font-size: 0.98rem;
+            margin: 15px 0 5px 0;
+        }
+
+        .module-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .module-card ul, .module-card ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .module-card li {
+            margin-bottom: 8px;
+        }
+
+        /* Responsive Data Tables */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #121212;
+            font-size: 0.9rem;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table th {
+            background-color: #1a1520;
+            color: var(--dark-purple);
+            font-weight: 600;
+        }
+
+        /* Multimedia Audio Block */
+        .audio-container {
+            background-color: #1a1520;
+            padding: 16px;
+            border-radius: 14px;
+            margin-top: 20px;
+            border: 1px dashed #4e355e;
+            text-align: center;
+        }
+
+        .audio-container p {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        audio {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        /* CSS Box Model Visual Aid */
+        .box-model-demo {
+            border: 2px dashed var(--accent-purple);
+            background-color: #1a1520;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+            border-radius: 8px;
+            color: var(--dark-purple);
+        }
+        .box-model-inner {
+            background-color: #2e1f38;
+            padding: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        /* Form & Academic Profile Sections */
+        .contact-section {
+            background-color: #0a0a0a;
+            padding: 40px 15px;
+            border-top: 2px dashed var(--border-color);
+            margin-top: 40px;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .student-info {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            max-width: 500px;
+            margin: 0 auto 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .student-info h3 {
+            color: var(--dark-purple);
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .student-info p {
+            margin-bottom: 8px;
+            font-size: 0.92rem;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 4px;
+            color: var(--text-muted);
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            padding: 25px 20px;
+            border-radius: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .form-container h3 {
+            margin-bottom: 20px;
+            color: var(--dark-purple);
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--dark-purple);
+            font-size: 0.85rem;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #1a1a1a;
+            color: var(--dark-purple);
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            background-color: #121212;
+        }
+
+        .form-container .btn {
+            width: 100%;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.95rem;
+            color: #000000;
+        }
+
+        /* Minimal Footer */
+        footer {
+            background-color: #000000;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 25px 15px;
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Mobile Tuning Rules */
+        @media (max-width: 600px) {
+            header {
+                padding: 12px 15px;
+            }
+            header .logo {
+                font-size: 1rem;
+            }
+            nav a {
+                margin-left: 12px;
+                font-size: 0.85rem;
+            }
+            .hero {
+                padding: 45px 15px;
+            }
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========================================== -->
+    <!-- FIXED: INITIAL LANDING VIEW                -->
+    <!-- ========================================== -->
+    <div id="landing-view" class="app-page active-view" style="padding: 60px 20px; min-height: 95vh; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 45px 30px; text-align: center; max-width: 520px; width: 100%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7); border-top: 5px solid var(--accent-purple);">
+            
+
+            <span style="color: var(--accent-purple); font-size: 0.85rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 8px;">OBADAN STEPHANIE OLOHITARE✨</span>
+            <h1 style="color: #fff; font-size: 2.1rem; margin: 0 0 10px 0; font-weight: 700; letter-spacing: -0.5px;">ABOUT ME</h1>
+            <h3 style="color: var(--text-muted); font-size: 1.05rem; font-weight: 400; margin: 0 0 25px 0;">YEAH THE RUMOURS ARE TRUE</h3>
+            
+            <!-- Completely Unique, Girlie, Gamer & Foodie About Me Paragraph -->
+<p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin: 0 0 35px 0; text-align: justify; padding: 0 10px;">
+    <strong style="color: var(--accent-purple); font-size: 1.15rem; display: block; margin-bottom: 12px; text-align: center; letter-spacing: 1px;">Welcome to My Digital Space ✨</strong>
+    
+    Heyyyyyyyy heard you were looking for me well i am here! Welcome to getting to know what i do for fun with the help of AI at times 😂 
+    <br><br>
+    Let's get real for a second,this portfolio is something incredibly close to my heart. It's way more than just another assignment on a grading sheet; it's the official launchpad for my journey into tech. As a Cybersecurity student, I've always been completely obsessed with figuring out the mysteries happening behind our screens. Building this interactive site is my first big step toward turning all that curiosity into real digital creativity. Every single line of code here represents late nights, stubborn debugging sessions, and a whole lot of passion.
+    <br><br>
+    Now, if we are being completely honest, I am an absolute talkative and a deeply playful person,which is honestly a terrible combo if you think about it!😂😂 Once you get me started, I can talk for hours without hitting the brakes, and my playful energy means I'm always looking for a laugh or cracking jokes when I should probably be focused. It means I bring chaos everywhere I go, but hey, at least life is never boring around me! 
+    <br><br>
+    When I’m not bringing my energetic chaos to code blocks or screaming at the TV supporting Manchester City (up Cityzens 🩵), I’m usually unwinding with video games. There is nothing better than grabbing a controller to completely dive into a virtual world and crush a few levels. I’m all about finding that perfect sweet spot where logic meets style—whether I’m analyzing security concepts, gaming, curating my Pinterest boards for high-fashion aesthetics, or planning my daily skincare and wellness routines.
+    
+    <br><br>
+    <strong style="color: var(--accent-purple); font-size: 1.1rem; display: block; margin: 20px 0 10px 0; text-align: left; letter-spacing: 0.5px;">In My Culinary Element 👩‍🍳🌸</strong>
+    Aside from tech and gaming, the kitchen is my absolute sanctuary! Cooking is my ultimate love language and creative escape; I completely love taking simple ingredients and turning them into something delicious, comforting, and aesthetically pleasing. Experimenting with new recipes is how I channel my inner food stylist, and honestly, making a beautiful dish look as good as it tastes is an art form all on its own.
+    <br><br>
+    Thank you so much for stopping by,I hope you have as much fun exploring this space as I had building it! 💖
+</p>
+
+
+            <!-- Custom Pill Button executing navigation routing -->
+            <button onclick="navigateTo('home-view')" class="btn" style="padding: 12px 32px; font-size: 0.95rem;">
+                Explore Portfolio Modules &rarr;
+            </button>
+        </div>
+    </div>
+
+
+            <!-- Custom Pill Button executing navigation routing -->
+
+
+    <!-- ========================================== -->
+    <!-- MAIN APPLICATION WORKSPACE INTERFACE       -->
+    <!-- ========================================== -->
+    <div id="home-view" class="app-page">
+        <header>
+            <div class="logo">CSC 121 Hub</div>
+            <nav>
+                <a onclick="navigateTo('landing-view')">About Me</a>
+                <a onclick="navigateTo('home-view')">Home</a>
+                <a onclick="navigateTo('home-view', 'contact')">Contact</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <div class="hero-content">
+                <h1>INTRODUCTION TO WEB PROGRAMMING</h1>
+                <p>A compilation of foundational web concepts, practical modules, and student laboratory assignments.</p>
+            </div>
+        </section>
+
+        <main class="container">
+            <h2 class="section-title">Lab Manual Modules</h2>
+            
+            <div class="modules-grid">
+                <!-- Module 1 Card -->
+                <div class="module-preview-card">
+                    <div class="card-image-slot">
+                        <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=500&auto=format&fit=crop&q=60" alt="Web Programming Basics">
+                    </div>
+                    <h3>Module 1</h3>
+                    <p>Web Programming Basics, Internet Systems & Connection Methods.</p>
+                    <button onclick="navigateTo('module1-view')" class="btn">Open Module</button>
+                </div>
+
+                <!-- Module 2 Card -->
+                <div class="module-preview-card">
+                    <div class="card-image-slot">
+                        <img src="https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=500&auto=format&fit=crop&q=60" alt="HTML Tag Wireframe">
+                    </div>
+                    <h3>Module 2</h3>
+                    <p>Hypertext Markup Language (HTML) Structure, Tables & Forms.</p>
+                    <button onclick="navigateTo('module2-view')" class="btn">Open Module</button>
+                </div>
+
+                <!-- Module 3 Card -->
+                <div class="module-preview-card">
+                    <div class="card-image-slot">
+                        <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=500&auto=format&fit=crop&q=60" alt="CSS Styling and Palettes">
+                    </div>
+                    <h3>Module 3</h3>
+                    <p>Cascading Style Sheets (CSS) Typographies, Borders & Layout Box Model.</p>
+                    <button onclick="navigateTo('module3-view')" class="btn">Open Module</button>
+                </div>
+            </div>
+        </main>
+
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <h2 class="section-title">Contact Assignment Sheet</h2>
+                
+                <div class="student-info">
+                    <h3>Academic Profile</h3>
+                    <p><strong>Name:</strong> Stephanie Olohitare Obadan</p>
+                    <p><strong>Reg. No:</strong> 25/CO/CY/006</p>
+                    <p><strong>Department:</strong> Cybersecurity</p>
+                </div>
+
+                <div class="form-container">
+                    <h3>Send External Feedback</h3>
+                    <form action="#" method="POST" onsubmit="event.preventDefault(); alert('Message template simulation successful!');">
+                        <div class="form-group">
+                            <label for="visitor-name">Name</label>
+                            <input type="text" id="visitor-name" name="name" placeholder="Your Full Name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="visitor-phone">Phone Number</label>
+                            <input type="tel" id="visitor-phone" name="phone" placeholder="Your Phone Number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" placeholder="Message Subject" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comments">Comments</label>
+                            <textarea id="comments" name="comments" rows="4" placeholder="Write remarks here..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn">Submit Entry</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- DETAILED VIEW: MODULE 1 INTERNALS          -->
+    <!-- ========================================== -->
+    <div id="module1-view" class="app-page">
+        <main class="container">
+            <button onclick="navigateTo('home-view')" class="btn" style="margin-bottom: 20px; background-color: #1a1520; color: var(--dark-purple); border: 1px solid var(--border-color);">← Back</button>
+            <article class="module-card">
+                <div class="card-image-slot">
+                    <img src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=500&auto=format&fit=crop&q=60" alt="Web Programming Basics">
+                </div>
+
+                <h2>Module 1</h2>
+                <div class="subtitle">Web Programming Basics</div>
+                
+                <h4>Unit 1: Definitions of Web Programming, the Internet and World Wide Web (WWW)</h4>
+                <p>This module begins by introducing some theoretical concepts of the Internet and the Web. It explains the importance and the need for web programming.</p>
+                
+                <h5>What is Web Programming?</h5>
+                <p>Web programming is the process of writing codes that will eventually create a website. Texts and multimedia contents can be manipulated by a web designer to produce an elegant page that is seen on a web browser.</p>
+
+                <h5>Importance of Web Programming</h5>
+                <ul>
+                    <li><strong>Global Reach:</strong> The Internet and the web allow businesses to reach a worldwide audience with their products and services.</li>
+                    <li><strong>Cost-Effectiveness:</strong> Web development enables businesses to reduce costs by automating processes and improving operational metrics.</li>
+                </ul>
+
+                <h4>What is the Internet?</h4>
+                <p>The Internet is a global communication system consisting of hardware and software infrastructures that provide connectivity between remote computers.</p>
+
+                <h4>What is the Web?</h4>
+                <p>The Web is a collection of interconnected documents and other resources, linked by hyperlinks and universal resource locators (URLs).</p>
+
+                <h4>How to Connect to the Internet</h4>
+                <ol>
+                    <li><strong>Wireless Broadband (Wi-Fi):</strong> Connection via wireless transmission configurations setup on portable parameters.</li>
+                    <li><strong>Ethernet Cable:</strong> Hardware data streaming execution mapping using Cat5 or Cat6 wiring connections.</li>
+                    <li><strong>Dial-up Connection:</strong> Legacy structural link configurations operating over phone modem connections.</li>
+                </ol>
+            </article>
+        </main>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- DETAILED VIEW: MODULE 2 INTERNALS          -->
+    <!-- ========================================== -->
+    <div id="module2-view" class="app-page">
+        <main class="container">
+            <button onclick="navigateTo('home-view')" class="btn" style="margin-bottom: 20px; background-color: #1a1520; color: var(--dark-purple); border: 1px solid var(--border-color);">← Back</button>
+            <article class="module-card">
+                <div class="card-image-slot">
+                    <img src="https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=500&auto=format&fit=crop&q=60" alt="HTML Tag Wireframe">
+                </div>
+
+                <h2>Module 2</h2>
+                <div class="subtitle">Hypertext Markup Language (HTML)</div>
+                
+                <h4>Unit 1: HTML Tags and Attributes</h4>
+                <p>HTML files are compiled using structural element components known as tags. Most tags have an opening marker and a closing marker. Attributes provide extra configuration values to these elements inside the opening block.</p>
+                <ul>
+                    <li><code>&lt;h1&gt; to &lt;h6&gt;</code> - Section Heading definitions.</li>
+                    <li><code>&lt;p&gt;</code> - Core paragraph block formatting element.</li>
+                    <li><code>&lt;a href="..."&gt;</code> - Hyperlink resource mapping property.</li>
+                </ul>
+
+                <h4>Unit 2: Structure of an HTML Page</h4>
+                <p>Every standard compliant document follows a strict framework deployment configuration. The foundation markup maps out precisely like this template execution:</p>
+                <ul>
+                    <li><strong>DOCTYPE declaration:</strong> Tells browsers to read standard HTML5 rules.</li>
+                    <li><strong>HTML Root element:</strong> Wraps up all coding entries securely.</li>
+                    <li><strong>Head container:</strong> Holds meta configuration attributes, styles, and tab titles.</li>
+                    <li><strong>Body block:</strong> Displays visual render layouts to end-point site visitors.</li>
+                </ul>
+
+                <h4>Unit 3: HTML Lists and Tables</h4>
+                <p>Data matrices are managed either through linear bullet structures or grid layouts as shown below:</p>
+                <h5>Example of HTML Lists:</h5>
+                <ul>
+                    <li>Unordered item layout (using bullet points)</li>
+                    <li>Ordered numeric layout (using serial tracking)</li>
+                </ul>
+
+                <h5>Example Matrix Layout (HTML Table Elements):</h5>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Element Tag</th>
+                                <th>Functional Layout Duty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>&lt;table&gt;</code></td>
+                                <td>Declares a container grid framework</td>
+                            </tr>
+                            <tr>
+                                <td><code>&lt;tr&gt;</code></td>
+                                <td>Creates a row container within structural arrays</td>
+                            </tr>
+                            <tr>
+                                <td><code>&lt;td&gt;</code></td>
+                                <td>Injects active textual info data blocks into grid columns</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Unit 4: HTML Form Processing & Multimedia</h4>
+                <p>Forms gather interactive data entries from visitors, while media parameters enable interactive audio and video streams within viewport frames.</p>
+                
+                <h5>Live Audio Demonstration Component:</h5>
+                <div class="audio-container">
+                    <p>Embedded Multimedia Resource Loop:</p>
+                    <audio controls>
+                        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <h4>Practical Exercises</h4>
+                <p>Construct a sample portfolio layout nesting information matrices alongside interactive submission blocks exactly like the assignment dashboard visible below on the main application interface page.</p>
+            </article>
+        </main>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- DETAILED VIEW: MODULE 3 INTERNALS          -->
+    <!-- ========================================== -->
+    <div id="module3-view" class="app-page">
+        <main class="container">
+            <button onclick="navigateTo('home-view')" class="btn" style="margin-bottom: 20px; background-color: #1a1520; color: var(--dark-purple); border: 1px solid var(--border-color);">← Back</button>
+            <article class="module-card">
+                <div class="card-image-slot">
+                    <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=500&auto=format&fit=crop&q=60" alt="CSS Styling and Palettes">
+                </div>
+
+                <h2>Module 3</h2>
+                <div class="subtitle">Cascading Style Sheets (CSS)</div>
+                
+                <h4>Unit 1: Basics of CSS</h4>
+                <p>CSS dictates the visual appearance, color maps, and space parameters of structural layouts. It links configuration properties to target selectors utilizing structured syntax blocks:</p>
+                <ul>
+                    <li><strong>Selector:</strong> Points to the specific HTML tag to style (e.g., <code>body</code>).</li>
+                    <li><strong>Declaration:</strong> Declares properties and values enclosed inside curly braces.</li>
+                </ul>
+
+                <h4>Unit 2: Adding Style to HTML</h4>
+                <p>Visual styling definitions can be appended to an application via three distinct methods:</p>
+                <ol>
+                    <li><strong>Inline Style:</strong> Set directly inside tag blocks using the <code>style="..."</code> property attribute.</li>
+                    <li><strong>Internal Stylesheet:</strong> Declared globally within the head using <code>&lt;style&gt;</code> element blocks.</li>
+                </ol>
+
+                <h4>Unit 3: CSS Text, Font, and Colors</h4>
+                <p>Typography layouts manage reading layouts via specific attributes:</p>
+                <ul>
+                    <li><code>color</code> - Modifies the foreground text hue (e.g., <code>#c084fc</code>).</li>
+                    <li><code>font-family</code> - Selects the type face structure (e.g., 'Segoe UI', system-ui).</li>
+                    <li><code>text-align</code> - Handles structural alignments like center or justify positioning rules.</li>
+                </ul>
+
+                <h4>Unit 4: CSS Borders, Margin, and Padding</h4>
+                <p>The standard Layout Box Model treats every page element as a square container envelope governed by specific outer and inner buffer boundaries:</p>
+                
+                <div class="box-model-demo">
+                    Margin Area (Outer Clearance Space)
+                    <div style="border: 2px solid var(--accent-purple); padding: 15px; background: #121212; margin: 10px 0;">
+                        Border Line boundary limits
+                        <div class="box-model-inner">
+                            Padding Area (Inner text cushion) <br>
+                            <span style="color: var(--accent-purple); font-weight:700;">[Central Content Core Element]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h4>Practical Exercises</h4>
+                <p>Build a cohesive style ruleset deploying variable properties, curved border radius structures, and flex layout positioning patterns across dynamic multi-device responsive viewports.</p>
+            </article>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; Olohitare's work | CSC 121 Assignment Submission</p>
+    </footer>
+
+    <!-- Universal Functional View Routing Architecture -->
+    <script>
+        function navigateTo(pageId, elementId = null) {
+            const pages = document.querySelectorAll('.app-page');
+            pages.forEach(page => page.classList.remove('active-view'));
+            
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active-view');
+            }
+
+            if (elementId) {
+                setTimeout(() => {
+                    const targetElement = document.getElementById(elementId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 50);
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+    </script>
+</body>
+</html>
